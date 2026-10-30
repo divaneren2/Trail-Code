@@ -15,8 +15,17 @@
 </p>
 
 ```bash
-# Global installation / usage
-npm install -g trail-laravel
+# Option 1: Install globally from GitHub
+npm install -g git+https://github.com/divaneren2/Trail-Code.git
+
+# Option 2: Or install from source
+git clone https://github.com/divaneren2/Trail-Code.git trail-laravel
+cd trail-laravel
+npm install && npm run build && npm link
+
+# (Or once published to npm):
+# npm install -g trail-laravel
+
 # Inside your Laravel project:
 trail-laravel init
 trail-laravel build
@@ -112,6 +121,30 @@ Indexes component tags (`<x-header />`), named slots (`<x-slot:actions>`), layou
 * Global binary named **`trail-laravel`** ensures no naming collision if official `trail` is also installed.
 * Auto-generated `AGENTS.md`, `GEMINI.md`, and `.cursor/rules/` instruct agents to invoke `trail-laravel`.
 * MCP Server configurations automatically wire `{ command: "trail-laravel", args: ["mcp"] }` for IDEs (Google Antigravity, Gemini CLI, Cursor, Claude Code).
+
+---
+
+## 📥 Installation
+
+### Method 1: Global Install via GitHub (Recommended)
+You can install `trail-laravel` globally on any machine directly from GitHub:
+```bash
+npm install -g git+https://github.com/divaneren2/Trail-Code.git
+```
+
+### Method 2: From Source
+```bash
+git clone https://github.com/divaneren2/Trail-Code.git trail-laravel
+cd trail-laravel
+npm install
+npm run build
+npm link
+```
+
+### Method 3: Via npm Registry (After `npm publish`)
+```bash
+npm install -g trail-laravel
+```
 
 ---
 
