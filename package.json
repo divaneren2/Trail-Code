@@ -1,6 +1,6 @@
 {
   "name": "trail-laravel",
-  "version": "0.28.0",
+  "version": "0.28.1",
   "description": "Self-learning AST context engine & knowledge graph optimized for Laravel codebases and AI coding agents",
   "keywords": [
     "laravel",
@@ -20,8 +20,7 @@
     "type": "git",
   },
   "homepage": "https://github.com/divaneren2/Trail-Code#readme",
-  "bugs": {
-  },
+  "bugs": {},
   "publishConfig": {
     "access": "public"
   },
