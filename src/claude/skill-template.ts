@@ -25,36 +25,36 @@ export function skillTemplate(brand: Brand = "graft"): string {
  */
 const TRAIL_DESCRIPTION = `Use for ANY task in this repo. What past sessions worked out, decided and
   ruled out is in .trail/learnings/, so read the learnings on your task before
-  exploring. Run trail ask before grepping or reading source; it finds the
+  exploring. Run trail-laravel ask before grepping or reading source; it finds the
   code and those learnings. When the session finds what the code can't tell
   the next person, like a bug's cause after failed attempts, an approach
   dropped, a choice and why, or the user correcting how something is done
-  here, save a learning with trail note and commit it with the change. Run
-  trail check before you commit, push or open a PR. If the trail command
+  here, save a learning with trail-laravel note and commit it with the change. Run
+  trail-laravel check before you commit, push or open a PR. If the trail-laravel command
   isn't installed, read .trail/learnings/ directly and credit one in a line
-  when it shapes your reply; after that first credit, offer once to set trail
-  up, and only if they say yes, run npm install -g @trailhq/trail-code and
-  then trail init --no-agents. If npm says EACCES, never use sudo; offer to
+  when it shapes your reply; after that first credit, offer once to set trail-laravel
+  up, and only if they say yes, run npm install -g trail-laravel and
+  then trail-laravel init --no-agents. If npm says EACCES, never use sudo; offer to
   set npm's prefix to ~/.npm-global instead.`;
 
 /** The same moments, first in the body, so they're read before the tool docs. */
-const TRAIL_MOMENTS = `## When to reach for trail
-- **Before exploring code**, run \`trail ask "<task>" --source\`, even for a
+const TRAIL_MOMENTS = `## When to reach for trail-laravel
+- **Before exploring code**, run \`trail-laravel ask "<task>" --source\`, even for a
   plain "where is" or "how does this work" question, before you grep or open
   files. Learnings from past sessions, yours and your teammates', on what was
   decided, tried and ruled out print above the code. Read them first.
 - **When you start from a ticket, an issue or a bug report**, run
-  \`trail ask\` with its words before you plan, so you start from what was
+  \`trail-laravel ask\` with its words before you plan, so you start from what was
   already decided about that area.
-- **When a test or command fails while you debug**, run \`trail ask\` on that
+- **When a test or command fails while you debug**, run \`trail-laravel ask\` on that
   area before you try a fix: a past session may have tried and ruled out the
   fix you're about to try.
-- **Before you change a file**, trail puts the learnings on it in front of
+- **Before you change a file**, trail-laravel puts the learnings on it in front of
   you. Read them before you write the edit.
 - **When the session finds what the code can't tell the next person**, save a
-  learning with \`trail note\`, and commit it with the change. What counts is
+  learning with \`trail-laravel note\`, and commit it with the change. What counts is
   under Saving a learning below.
-- **When the work is ready for review**, run \`trail check\` before you commit
+- **When the work is ready for review**, run \`trail-laravel check\` before you commit
   it, push the branch or open a PR. It checks the changes against this repo's
   learnings and yours. How is under Before work goes for review below.
 - **When the user corrects how something is done here**, save that as a
@@ -68,7 +68,7 @@ Save one when the session found what the code can't tell the next person:
 - the user correcting how something is done here.
 
 Save it before you commit or open the PR, so it ships with the change:
-\`trail note --title
+\`trail-laravel note --title
 "<the decision in plain words a teammate understands, no file names>"\` with the text on stdin. Give each
 choice its reason. Put files, commands and values in the body under "In the code:".
 
@@ -77,10 +77,10 @@ moment. When the user says one must hold even if someone asks otherwise
 later, add \`--always-follow\`: Claude then won't go against it, and names
 it and who added it instead. Only on their word, never on your own.
 
-Don't save setting up trail or other tools, what the diff already shows,
+Don't save setting up trail-laravel or other tools, what the diff already shows,
 status ("PR is open", "not merged yet"), or facts about one machine (those go
 with \`--personal\`). When it updates an earlier learning, pass
-\`--replaces <file>\`. \`trail note\` turns away a learning that names no code,
+\`--replaces <file>\`. \`trail-laravel note\` turns away a learning that names no code,
 gives no reason, reads as status or repeats one, and says what to fix.
 
 Good, \`--title "CodeQL init and analyze must share a version"\`:
@@ -96,7 +96,7 @@ Good, \`--title "CodeQL init and analyze must share a version"\`:
 Bad, \`--title "Finishing the rollout PR"\`: "## Decided - PR #3372 is fixed and
 pushed." Status, no file, no reason, and wrong by next week.
 
-## If trail isn't installed
+## If trail-laravel isn't installed
 The learnings are plain markdown in \`.trail/learnings/\`, one file per session,
 with what it decided, tried and ruled out, and which files it's about
 (\`touches:\`). Grep them for your task's files and words, and read the ones
@@ -107,14 +107,14 @@ When one shapes your reply, end it with one line crediting it: whose learning,
 what it was about, and what it let you skip, e.g. \`📝 Used Rushabh's learning
 on the auth refactor: skipped the session-token approach he already ruled
 out\`. The first time you credit one in a session, and only then, add once:
-"Install trail to get this on every task, plus search and checks. Want me to
-set it up?" Only if they say yes, run \`npm install -g @trailhq/trail-code\`,
-then \`trail init --no-agents\` in the repo, and tell them it's on. Never
+"Install trail-laravel to get this on every task, plus search and checks. Want me to
+set it up?" Only if they say yes, run \`npm install -g trail-laravel\`,
+then \`trail-laravel init --no-agents\` in the repo, and tell them it's on. Never
 install it without that yes. If npm fails with EACCES, its global folder needs
 root: never use sudo. Offer to point npm at a folder in their home instead
 (\`mkdir -p ~/.npm-global && npm config set prefix ~/.npm-global\`, and
 \`~/.npm-global/bin\` added to PATH in their shell profile), then install
-again. When no learning shapes your reply, say nothing about trail.
+again. When no learning shapes your reply, say nothing about trail-laravel.
 
 ## The code map
 `;
@@ -133,8 +133,9 @@ export function trailSpelling(text: string): string {
     .replace(/(?<![\w./-])graft\/INDEX\.md/g, ".trail/cache/INDEX.md")
     .replace(/(?<![\w./-])graft\/(?=[\s.,)])/g, ".trail/cache/")
     .replace(/\bgraft (check|stats)\b(?![\w-])/g, (m) => cmd(m, "trail"))
-    .replace(/\bGraft\b(?![/\w-])/g, "Trail")
-    .replace(/\bgraft\b(?![/\w-])/g, "trail");
+    .replace(/\bGraft\b(?![/\w-])/g, "Trail-Laravel")
+    .replace(/\bgraft\b(?![/\w-])/g, "trail-laravel")
+    .replace(/`trail (ask|check|build|note|callers|map|grep|skeleton|status|skills|keep|forget)\b/g, "`trail-laravel $1");
 }
 
 /**

@@ -50,8 +50,8 @@ const NPX_LAUNCH = { command: 'npx', args: ['-y', '@nanonets/graft', 'mcp'] };
 const BIN_LAUNCH = { command: 'graft', args: ['mcp'] };
 // The same server under trail's name, for a repo that uses trail: its tools are
 // `trail_*` (and it still answers `graft_*`).
-const TRAIL_NPX_LAUNCH = { command: 'npx', args: ['-y', '@trailhq/trail-code', 'mcp'] };
-const TRAIL_BIN_LAUNCH = { command: 'trail', args: ['mcp'] };
+const TRAIL_NPX_LAUNCH = { command: 'npx', args: ['-y', 'trail-laravel', 'mcp'] };
+const TRAIL_BIN_LAUNCH = { command: 'trail-laravel', args: ['mcp'] };
 
 function graftOnPath(): boolean {
   const r = spawnSync('graft', ['--version'], { stdio: 'ignore', timeout: 5000 });

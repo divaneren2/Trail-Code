@@ -598,6 +598,59 @@ export function extractBladeFile(rel: string, source: string): ExtractResult {
     addSymbol(name, match.index, match[0]);
   }
 
+  // 6. Component Definition (for files inside components/)
+  const normRel = rel.replace(/\\/g, "/");
+  const compMatch = /(?:^|\/)components\/(.+)\.blade\.php$/i.exec(normRel);
+  if (compMatch) {
+    const rawComp = compMatch[1].replace(/\//g, ".");
+    const modMatch = /^Modules\/([^/]+)\//i.exec(normRel);
+    const compTag = modMatch
+      ? `<x-${modMatch[1].toLowerCase()}::${rawComp}>`
+      : `<x-${rawComp}>`;
+    addSymbol(`component: ${compTag}`, 0, compTag);
+  }
+
+  // 7. Component Slots ($slot)
+  const SLOT_REGEX = /\{\{\s*\$slot\s*\}\}|\$slot\b/g;
+  while ((match = SLOT_REGEX.exec(source)) !== null) {
+    addSymbol("$slot", match.index, match[0]);
+  }
+
+  // 8. Component Props (@props)
+  const PROPS_REGEX = /@props\s*\(\s*(\[[^\]]*\]|['"][^'"]*['"])\s*\)/g;
+  while ((match = PROPS_REGEX.exec(source)) !== null) {
+    const pStr = match[1].replace(/\s+/g, " ");
+    const pDesc = pStr.length > 30 ? `${pStr.slice(0, 27)}...` : pStr;
+    addSymbol(`@props(${pDesc})`, match.index, match[0]);
+  }
+
+  // 9. Stacks & Push (@stack, @push)
+  const STACK_REGEX = /@stack\s*\(\s*['"]([^'"]+)['"]\s*\)/g;
+  while ((match = STACK_REGEX.exec(source)) !== null) {
+    addSymbol(`@stack('${match[1]}')`, match.index, match[0]);
+  }
+
+  const PUSH_REGEX = /@push\s*\(\s*['"]([^'"]+)['"]\s*\)/g;
+  while ((match = PUSH_REGEX.exec(source)) !== null) {
+    addSymbol(`@push('${match[1]}')`, match.index, match[0]);
+  }
+
+  // 10. Route calls (route('...'), Route::has('...'))
+  const ROUTE_CALL_REGEX = /(?:route|Route::has)\s*\(\s*['"]([^'"]+)['"]/g;
+  while ((match = ROUTE_CALL_REGEX.exec(source)) !== null) {
+    const rName = match[1];
+    addSymbol(`route('${rName}')`, match.index, match[0], {
+      relation: "calls",
+      targetName: rName,
+    });
+  }
+
+  // 11. @php blocks
+  const PHP_BLOCK_REGEX = /@php\b/g;
+  while ((match = PHP_BLOCK_REGEX.exec(source)) !== null) {
+    addSymbol("@php block", match.index, match[0]);
+  }
+
   nodes[0].body_text = searchBody(source, 2000);
   return { nodes, rawEdges };
 }

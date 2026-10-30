@@ -27,7 +27,7 @@ export const BRAND_ENV = "TRAIL_INVOKED_AS";
 
 /** The npm package each name is published as. Same code, two names. */
 export const PACKAGE_FOR: Record<Brand, string> = {
-  trail: "@trailhq/trail-code",
+  trail: "trail-laravel",
   graft: "@nanonets/graft",
 };
 
@@ -61,9 +61,9 @@ export function tag(env: NodeJS.ProcessEnv = process.env): string {
  * stats` became `trail status`.
  */
 const RENAMED: ReadonlyArray<readonly [string, string]> = [
-  ["graft check", "trail build --check"],
-  ["graft stats", "trail status"],
-  ["graft", "trail"],
+  ["graft check", "trail-laravel build --check"],
+  ["graft stats", "trail-laravel status"],
+  ["graft", "trail-laravel"],
 ];
 
 /**
@@ -146,7 +146,7 @@ export function noticeStampPath(home: string = homedir()): string {
 
 /** Whether a `trail` executable is on PATH. Only checked when the notice is due. */
 export function trailOnPath(env: NodeJS.ProcessEnv = process.env): boolean {
-  return commandOnPath("trail", env);
+  return commandOnPath("trail-laravel", env) || commandOnPath("trail", env);
 }
 
 /**
