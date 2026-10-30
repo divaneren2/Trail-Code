@@ -18,6 +18,16 @@ import {
   extractLaravelConfig,
   isLaravelRouteFile,
   extractLaravelRoutes,
+  isLaravelMigrationFile,
+  extractLaravelMigrations,
+  isLaravelBootstrapFile,
+  extractLaravelBootstrap,
+  isLaravelConsoleFile,
+  extractLaravelConsole,
+  isLaravelModelFile,
+  extractLaravelModel,
+  isLaravelSeederFile,
+  extractLaravelSeeders,
 } from "./laravel.js";
 
 export type Language = "typescript" | "tsx" | "python" | "go" | "java" | "kotlin" | "swift" | "php" | "r";
@@ -425,6 +435,21 @@ function extractTree(rel: string, source: string, lang: Language, root: SyntaxNo
     }
     if (isLaravelRouteFile(rel)) {
       extractLaravelRoutes(rel, source, root, ctx, nodes, rawEdges, minted);
+    }
+    if (isLaravelMigrationFile(rel)) {
+      extractLaravelMigrations(rel, source, root, ctx, nodes, rawEdges, minted);
+    }
+    if (isLaravelBootstrapFile(rel)) {
+      extractLaravelBootstrap(rel, source, root, ctx, nodes, rawEdges, minted);
+    }
+    if (isLaravelConsoleFile(rel)) {
+      extractLaravelConsole(rel, source, root, ctx, nodes, rawEdges, minted);
+    }
+    if (isLaravelModelFile(rel)) {
+      extractLaravelModel(rel, source, root, ctx, nodes, rawEdges, minted);
+    }
+    if (isLaravelSeederFile(rel)) {
+      extractLaravelSeeders(rel, source, root, ctx, nodes, rawEdges, minted);
     }
   }
   // nodes[0] is the file node; the rest are its symbols. Index the module-level
