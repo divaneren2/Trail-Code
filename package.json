@@ -1,8 +1,12 @@
 {
   "name": "trail-laravel",
   "version": "0.28.0",
-  "description": "Build a repo's context graph as a folder of linked markdown files: a local, regenerable cache that every query keeps in sync with your code.",
+  "description": "Self-learning AST context engine & knowledge graph optimized for Laravel codebases and AI coding agents",
   "keywords": [
+    "laravel",
+    "php",
+    "blade",
+    "eloquent",
     "ai",
     "agents",
     "knowledge-graph",
@@ -14,11 +18,9 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/trailhq/Trail-Code.git"
   },
-  "homepage": "https://github.com/trailhq/Trail-Code#readme",
+  "homepage": "https://github.com/divaneren2/Trail-Code#readme",
   "bugs": {
-    "url": "https://github.com/trailhq/Trail-Code/issues"
   },
   "publishConfig": {
     "access": "public"

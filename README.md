@@ -7,6 +7,7 @@
 **A specialized, production-ready fork of official [Trail-Code](https://github.com/trailhq/Trail-Code) (v0.28.0) by TrailHQ, built specifically for modern Laravel architecture.**
 
 <p align="center">
+  <a href="https://www.npmjs.com/package/trail-laravel"><img src="https://img.shields.io/npm/v/trail-laravel?style=for-the-badge&logo=npm&color=CB3837" alt="npm version" /></a>
   <img src="https://img.shields.io/badge/PHP-Laravel%2010%20%26%2011-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" />
   <img src="https://img.shields.io/badge/CLI-trail--laravel-4F46E5?style=for-the-badge&logo=node.js&logoColor=white" />
   <img src="https://img.shields.io/badge/TypeScript-strict-3178C6?style=for-the-badge&logo=typescript&logoColor=white" />
@@ -15,18 +16,10 @@
 </p>
 
 ```bash
-# Option 1: Install globally from GitHub
-npm install -g git+https://github.com/divaneren2/Trail-Code.git
+# 1. Install globally via npm
+npm install -g trail-laravel
 
-# Option 2: Or install from source
-git clone https://github.com/divaneren2/Trail-Code.git trail-laravel
-cd trail-laravel
-npm install && npm run build && npm link
-
-# (Or once published to npm):
-# npm install -g trail-laravel
-
-# Inside your Laravel project:
+# 2. Inside your Laravel project root:
 trail-laravel init
 trail-laravel build
 ```
@@ -126,13 +119,13 @@ Indexes component tags (`<x-header />`), named slots (`<x-slot:actions>`), layou
 
 ## 📥 Installation
 
-### Method 1: Global Install via GitHub (Recommended)
-You can install `trail-laravel` globally on any machine directly from GitHub:
+### 🚀 Recommended: Install Globally via npm
+Install `trail-laravel` globally on any system with Node.js 18+:
 ```bash
-npm install -g git+https://github.com/divaneren2/Trail-Code.git
+npm install -g trail-laravel
 ```
 
-### Method 2: From Source
+### 🛠️ Alternative: Install from Source (For Contributors)
 ```bash
 git clone https://github.com/divaneren2/Trail-Code.git trail-laravel
 cd trail-laravel
@@ -141,9 +134,9 @@ npm run build
 npm link
 ```
 
-### Method 3: Via npm Registry (After `npm publish`)
+### 🔄 Alternative: Install Directly from GitHub
 ```bash
-npm install -g trail-laravel
+npm install -g git+https://github.com/divaneren2/Trail-Code.git
 ```
 
 ---
