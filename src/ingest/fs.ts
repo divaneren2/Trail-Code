@@ -2,7 +2,7 @@
  * Filesystem walking used by `init`/`check` to enumerate a repo's source files.
  */
 import { spawnSync } from "node:child_process";
-import { existsSync, lstatSync, readdirSync, realpathSync, statSync } from "node:fs";
+import { existsSync, lstatSync, readdirSync, readFileSync, realpathSync, statSync } from "node:fs";
 import { isAbsolute, join, relative, resolve, sep } from "node:path";
 
 /** Directories that are dependency/build output, never source. */
@@ -19,6 +19,7 @@ export const SKIP_DIRS = new Set([
   "out",
   "target",
   "vendor",
+  "storage",
   "coverage",
   "__pycache__",
   "venv",
@@ -244,7 +245,7 @@ function gitVisibleFiles(
     // Filter against the original superproject path. Otherwise a submodule
     // mounted at vendor/ or build/ would bypass the parent's skip policy when
     // recursion resets its relative root.
-    if (skippedPath(relative(state.topRoot, abs), includes)) continue;
+    if (skippedPath(relative(state.topRoot, abs), includes, state.topRoot)) continue;
 
     const followChild =
       (entry.gitlink && opts.followSubmodules === true) ||
@@ -304,7 +305,7 @@ function gitVisibleFilesShallow(root: string, includes?: ReadonlySet<string>): s
 
   const out: string[] = [];
   for (const rel of result.stdout.split("\0")) {
-    if (!rel || skippedPath(rel, includes)) continue;
+    if (!rel || skippedPath(rel, includes, root)) continue;
     const abs = resolve(root, rel);
     try {
       const stat = lstatSync(abs);
@@ -319,22 +320,66 @@ function gitVisibleFilesShallow(root: string, includes?: ReadonlySet<string>): s
   return out;
 }
 
+const trailIgnoreCache = new Map<string, string[]>();
+
+export function loadTrailIgnore(root: string): string[] {
+  if (trailIgnoreCache.has(root)) return trailIgnoreCache.get(root)!;
+  const ignorePath = join(root, ".trailignore");
+  if (!existsSync(ignorePath)) {
+    trailIgnoreCache.set(root, []);
+    return [];
+  }
+  try {
+    const content = readFileSync(ignorePath, "utf8");
+    const lines = content
+      .split("\n")
+      .map((l) => l.trim())
+      .filter((l) => l.length > 0 && !l.startsWith("#"))
+      .map((l) => l.replace(/^\/+|\/+$/g, ""));
+    trailIgnoreCache.set(root, lines);
+    return lines;
+  } catch {
+    trailIgnoreCache.set(root, []);
+    return [];
+  }
+}
+
+function matchesTrailIgnore(relPath: string, root?: string): boolean {
+  if (!root) return false;
+  const rules = loadTrailIgnore(root);
+  if (rules.length === 0) return false;
+  const norm = relPath.replace(/\\/g, "/").replace(/^\/+/, "");
+  for (const r of rules) {
+    if (norm === r || norm.startsWith(`${r}/`)) return true;
+  }
+  return false;
+}
+
 /** A path (git-relative, either separator) is skipped when any of its
  * segments is a skippable directory name — the final segment doubles as the
  * dot-FILE check (`.eslintrc.js` and friends are not source either). */
-function skippedPath(path: string, includes?: ReadonlySet<string>): boolean {
-  return path.replace(/\\/g, "/").split("/").some((segment) => shouldSkipDir(segment, includes));
+function skippedPath(path: string, includes?: ReadonlySet<string>, root?: string): boolean {
+  const norm = path.replace(/\\/g, "/").replace(/^\/+/, "");
+  if (norm === "bootstrap/cache" || norm.startsWith("bootstrap/cache/")) {
+    if (!includes?.has("bootstrap/cache") && !includes?.has("cache")) return true;
+  }
+  if (root && matchesTrailIgnore(norm, root)) return true;
+  return norm.split("/").some((segment) => shouldSkipDir(segment, includes));
 }
 
-function walkFilesystem(dir: string, includes?: ReadonlySet<string>): string[] {
+function walkFilesystem(dir: string, includes?: ReadonlySet<string>, root: string = dir): string[] {
   const out: string[] = [];
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
     const full = join(dir, entry.name);
+    const rel = relative(root, full).replace(/\\/g, "/");
     if (entry.isDirectory()) {
       if (shouldSkipDir(entry.name, includes)) continue;
-      out.push(...walkFilesystem(full, includes));
+      if (rel === "bootstrap/cache" && !includes?.has("bootstrap/cache") && !includes?.has("cache")) continue;
+      if (matchesTrailIgnore(rel, root)) continue;
+      out.push(...walkFilesystem(full, includes, root));
     } else if (entry.isFile()) {
       if (entry.name.startsWith(".")) continue; // dot-files are not source either
+      if (matchesTrailIgnore(rel, root)) continue;
       try {
         if (statSync(full).size > MAX_FILE_BYTES) continue;
       } catch {

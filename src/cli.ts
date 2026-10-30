@@ -26,7 +26,7 @@ import { codexStatusLines, codexTrustLine } from "./hosts/codex-trust.js";
 import { hostIds } from "./hosts/registry.js";
 import { agentList, autoSelection, autoSummary } from "./hosts/auto.js";
 import { checkoutRoot, ensureRepoHome, keepsNotes, noteCount, rememberRepo, repoName, repoPlace, shownPath } from "./notes/home.js";
-import { asksForTrail, brand, cmd, graftNotice, PACKAGE_FOR, setBrand, strandedRepoNotice, tag, trailOnPath } from "./brand.js";
+import { asksForTrail, brand, BRAND_ENV, cmd, graftNotice, PACKAGE_FOR, setBrand, strandedRepoNotice, tag, trailOnPath } from "./brand.js";
 import { branchDiff } from "./cloud/diff.js";
 import { openBrowser } from "./util/browser.js";
 import { committedAtBase, learningsAtBase, teammateEdits, withBaseLearnings } from "./check/learning-edits.js";
@@ -130,7 +130,7 @@ const currentVersion = readCurrentVersion(import.meta.url);
  * `trail status` become one `status`. Under graft nothing moves. Trail's setup
  * prompt runs as trail whichever name started it (`asksForTrail`).
  */
-if (asksForTrail(process.argv.slice(2))) setBrand("trail");
+if (asksForTrail(process.argv.slice(2)) || !process.env[BRAND_ENV] || process.argv[1]?.includes("trail")) setBrand("trail");
 const TRAIL = brand() === "trail";
 
 /** Help-screen groups under trail; graft keeps its one flat list. */
@@ -176,7 +176,7 @@ function noteHit(found: boolean): void {
 }
 
 program
-  .name(brand())
+  .name("trail-laravel")
   .description(
     TRAIL
       ? "A code map for your coding agents, and the learnings each session leaves\n" +

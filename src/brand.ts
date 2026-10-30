@@ -32,7 +32,7 @@ export const PACKAGE_FOR: Record<Brand, string> = {
 };
 
 export function brand(env: NodeJS.ProcessEnv = process.env): Brand {
-  return env[BRAND_ENV] === "trail" ? "trail" : "graft";
+  return env[BRAND_ENV] === "graft" ? "graft" : "trail";
 }
 
 export function setBrand(b: Brand, env: NodeJS.ProcessEnv = process.env): void {

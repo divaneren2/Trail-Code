@@ -11,6 +11,14 @@ import { contentHash } from "../util/id.js";
 import { collectBindings, goReceiverVarOf, resolveRecvType, type FileBindings } from "./bindings.js";
 import { parseDepth, type SyntaxNode } from "./depth-parser.js";
 import type { Kind, NodeV1, Relation } from "./types.js";
+import {
+  isBladeFile,
+  extractBladeFile,
+  isLaravelConfigFile,
+  extractLaravelConfig,
+  isLaravelRouteFile,
+  extractLaravelRoutes,
+} from "./laravel.js";
 
 export type Language = "typescript" | "tsx" | "python" | "go" | "java" | "kotlin" | "swift" | "php" | "r";
 
@@ -45,6 +53,7 @@ const EXTENSIONS: ReadonlyArray<{ ext: string; grammar: Language; label: string 
   { ext: ".kt", grammar: "kotlin", label: "kotlin" },
   { ext: ".kts", grammar: "kotlin", label: "kotlin" },
   { ext: ".swift", grammar: "swift", label: "swift" },
+  { ext: ".blade.php", grammar: "php", label: "blade" },
   { ext: ".php", grammar: "php", label: "php" },
   // `entryFor` lower-cases the path before matching, so this one entry covers
   // both `.R` (the conventional case in real R codebases) and `.r`.
@@ -356,6 +365,9 @@ interface DefDescriptor {
 /** Throws when `lang`'s grammar is unavailable: callers check `depthReady`
  * (depth-parser.ts) first and hand such a file to its breadth-tier stand-in instead. */
 export function extractFile(rel: string, source: string, lang: Language): ExtractResult {
+  if (isBladeFile(rel)) {
+    return extractBladeFile(rel, source);
+  }
   return parseDepth(lang, source, (root) => extractTree(rel, source, lang, root));
 }
 
@@ -407,6 +419,14 @@ function extractTree(rel: string, source: string, lang: Language, root: SyntaxNo
   // when it's actually accidental shared mutable state across the whole walk.
   const minted = new Set<string>([rel]);
   walkNamedChildren(root.namedChildren, ctx, nodes, rawEdges, minted);
+  if (lang === "php") {
+    if (isLaravelConfigFile(rel)) {
+      extractLaravelConfig(rel, source, root, ctx, nodes, rawEdges, minted);
+    }
+    if (isLaravelRouteFile(rel)) {
+      extractLaravelRoutes(rel, source, root, ctx, nodes, rawEdges, minted);
+    }
+  }
   // nodes[0] is the file node; the rest are its symbols. Index the module-level
   // residual on the file node so a term outside every symbol still surfaces it.
   nodes[0].body_text = fileResidual(source, nodes.slice(1));

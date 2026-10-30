@@ -1,5 +1,5 @@
 {
-  "name": "@nanonets/graft",
+  "name": "trail-laravel",
   "version": "0.28.0",
   "description": "Build a repo's context graph as a folder of linked markdown files: a local, regenerable cache that every query keeps in sync with your code.",
   "keywords": [
@@ -34,7 +34,7 @@
     "./package.json": "./package.json"
   },
   "bin": {
-    "graft": "dist/bin/graft.js"
+    "trail-laravel": "./dist/cli.js"
   },
   "files": [
     "dist",
